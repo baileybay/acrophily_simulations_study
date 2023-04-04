@@ -1,0 +1,123 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+
+```{r}
+# Importing libraries:
+library (tidyverse)
+```
+
+
+# Converting mean absolute difference data to long format:
+
+```{r}
+
+# Reading in datasets:
+abs_diff_df_left <- read.csv('../data/sim_data/mean_abs_diff/mean_abs_diff_sim_left.csv')
+abs_diff_df_right <- read.csv('../data/sim_data/mean_abs_diff/mean_abs_diff_sim_right.csv')
+
+# Binding conservative and liberal datasets:
+abs_diff_df <- rbind(abs_diff_df_left, abs_diff_df_right)
+
+abs_diff_df
+
+# Converting mean abs diff columns to long format and removing unnecessary columns:
+df_long_abs_diff <- abs_diff_df %>% 
+  dplyr::select(threshold, orig_rating_ego, mean_abs_diff_empi, mean_abs_diff_random) %>%
+  pivot_longer(cols=c(3, 4), names_to='sim_condition', values_to='mean_abs_diff') %>%
+  dplyr::select(-threshold, -orig_rating_ego)
+
+# Converting confidence interval columns to long format and removing unnecessary columns:
+df_long_ci_lower <- abs_diff_df %>% 
+  dplyr::select(threshold, ci_empi_lower, ci_random_lower) %>%
+  pivot_longer(cols=c(2,3), names_to='ci_lower_condition', values_to='ci_lower') %>%
+  dplyr::select(-threshold)
+
+df_long_ci_upper <- abs_diff_df %>% 
+  dplyr::select(threshold, ci_empi_upper, ci_random_upper) %>%
+  pivot_longer(cols=c(2,3), names_to='ci_upper_condition', values_to='ci_upper') %>%
+  dplyr::select(-threshold)
+
+df_long_peer_ratings <- abs_diff_df %>% 
+  dplyr::select(threshold, poli_affil, orig_rating_ego, orig_rating_peer, random_rating_peer) %>%
+  pivot_longer(cols=c(4, 5), names_to='peer_rating_condition', values_to='peer_rating') 
+
+# Combining avg feel and avg perception variables into one dataframe:
+abs_diff_df_long <- cbind(df_long_peer_ratings, df_long_abs_diff, df_long_ci_lower, df_long_ci_upper)
+
+abs_diff_df_long
+
+# Saving results:
+write.csv(abs_diff_df_long, '../data/sim_data/mean_abs_diff/mean_abs_diff_long.csv', row.names=FALSE)
+```
+
+
+# Converting acrophily simulation data to long format:
+
+```{r}
+
+# Reading in datasets:
+acroph_df_left <- read.csv('../data/sim_data/acrophily/acrophily_sim_left.csv')
+acroph_df_right <- read.csv('../data/sim_data/acrophily/acrophily_sim_right.csv')
+
+# Binding conservative and liberal datasets:
+acroph_df <- rbind(acroph_df_left, acroph_df_right)
+
+acroph_df
+
+# Converting mean abs diff columns to long format and removing unnecessary columns:
+df_long_ratings <- acroph_df %>% 
+  dplyr::select(threshold, poli_affil, orig_rating_ego, orig_rating_peer, homoph_rating_peer, acroph_rating_peer_min, 
+                acroph_rating_peer_max) %>%
+  pivot_longer(cols=c(4:7), names_to='peer_rating_condition', values_to='peer_rating')
+
+df_long_ratings
+
+# Converting confidence interval columns to long format and removing unnecessary columns:
+df_long_prob <- acroph_df %>% 
+  dplyr::select(threshold, prob_more_extreme_empi, prob_more_extreme_homoph, prob_more_extreme_acroph_min, 
+                prob_more_extreme_acroph_max) %>%
+  pivot_longer(cols=c(2:5), names_to='prob_condition', values_to='prob_more_extreme') %>%
+  dplyr::select(-threshold)
+
+df_long_prob
+
+df_long_ci_lower <- acroph_df %>% 
+  dplyr::select(threshold, ci_empi_lower, ci_homoph_lower, ci_acroph_lower_min, ci_acroph_lower_max) %>%
+  pivot_longer(cols=c(2:5), names_to='ci_lower_condition', values_to='ci_lower') %>%
+  dplyr::select(-threshold)
+
+df_long_ci_lower
+
+df_long_ci_upper <- acroph_df %>% 
+  dplyr::select(threshold, ci_empi_upper, ci_homoph_upper, ci_acroph_upper_min, ci_acroph_upper_max) %>%
+  pivot_longer(cols=c(2:5), names_to='ci_upper_condition', values_to='ci_upper') %>%
+  dplyr::select(-threshold)
+
+df_long_ci_upper
+
+# Combining avg feel and avg perception variables into one dataframe:
+acroph_df_long <- cbind(df_long_ratings, df_long_prob, df_long_ci_lower, df_long_ci_upper)
+
+acroph_df_long
+
+# Saving results:
+write.csv(acroph_df_long, '../data/sim_data/acrophily/acrophily_sim_long.csv', row.names=FALSE)
+```
+
+
+# Combine left/right user coefficient data:
+```{r}
+# Reading in coefficient data:
+coef_cons <- read.csv('../data/user_coef_right.csv')
+coef_libs <- read.csv('../data/user_coef_left.csv')
+
+coef_df <- rbind(coef_cons, coef_libs) %>%
+  mutate(user_coef = prob_diff / sd(prob_diff)) %>%
+  dplyr::select(userid, user_coef, poli_affil)
+
+write.csv(coef_df, '../data/user_coef.csv', row.names = FALSE)
+```
+

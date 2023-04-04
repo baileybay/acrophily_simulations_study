@@ -1,0 +1,23 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+numpy = "*"
+pandas = "*"
+statsmodels = "*"
+flake8 = "*"
+acrophily_sims = {editable = true, path = "."}
+jupyter = "*"
+notebook = "*"
+torch = "*"
+python-dotenv = "*"
+seaborn = "*"
+matplotlib = "*"
+pymc3 = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.9"
