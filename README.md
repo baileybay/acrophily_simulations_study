@@ -5,4 +5,5 @@ Here, you will find a directory called retweet_network_study that contains code 
 Results indicate that both liberals and conservatives on Twitter prefer to retweet peers who are both copartisan and more extreme than themselves, relative to what we would expect if they were retweeting by chance or retweeting based only on political similarity. This highlights a key potential driver of polarization in the modern age, perhaps paving the way for a solution that helps reduce political conflict in America. 
 
 The preprint can be found at the following link:
+
 https://osf.io/cmx4p/
